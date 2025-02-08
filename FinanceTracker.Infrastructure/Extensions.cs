@@ -14,7 +14,7 @@ namespace FinanceTracker.Infrastructure
                 ?? throw new InvalidOperationException($"Connection string {connectionStringName} not found.");
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseSqlServer(connectionString));
 
             return services;
         }

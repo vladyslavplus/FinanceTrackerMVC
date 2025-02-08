@@ -15,6 +15,7 @@ namespace FinanceTracker.Domain.Configurations
                 .HasMaxLength(50);
 
             builder.Property(c => c.Icon)
+                .IsRequired()
                 .HasMaxLength(5);
 
             builder.Property(c => c.Type)
