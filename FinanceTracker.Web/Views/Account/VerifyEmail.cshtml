@@ -1,0 +1,38 @@
+﻿@model VerifyEmailViewModel
+
+@{
+	ViewData["Title"] = "Verify Email";
+	Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="login">
+	<img src="~/log-blue-bg.jpg" alt="image" class="login__bg" />
+
+	<form class="login__form" asp-action="VerifyEmail" method="post">
+		@Html.AntiForgeryToken()
+		<h1 class="login__title">Verify Email</h1>
+
+		<div class="login__inputs">
+			<div class="login__box">
+				<input asp-for="Email" required placeholder="Enter your email" class="login__input" />
+				<i class="ri-mail-fill"></i>
+				<div class="text-danger">
+					@Html.ValidationMessageFor(model => model.Email)
+				</div>
+			</div>
+		</div>
+
+		<button type="submit" class="login__button" value="VerifyEmail">Verify</button>
+
+		<div class="login__register">
+			<a asp-controller="Account" asp-action="Login" class="text-decoration-none text-white">Back</a>
+		</div>
+
+	</form>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+	}
+}

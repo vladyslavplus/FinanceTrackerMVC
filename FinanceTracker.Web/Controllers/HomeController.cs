@@ -1,23 +1,38 @@
 using System.Diagnostics;
+using FinanceTracker.Domain.Entities;
+using FinanceTracker.Infrastructure.Data;
 using FinanceTracker.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(new Messages());
         }
-
+        [HttpPost]
+        public async Task<IActionResult> Index(Messages message)
+        {
+            if (ModelState.IsValid)
+            {
+                await _context.Messages.AddAsync(message);
+                TempData["SuccessMessage"] = "Message sent successfully!";
+                await _context.SaveChangesAsync();
+                ModelState.Clear();
+                return View(new Messages());
+            }
+            return View(message);
+        }
         public IActionResult Privacy()
         {
             return View();

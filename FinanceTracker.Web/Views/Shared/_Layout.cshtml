@@ -4,6 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Finance Tracker</title>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	@* <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/28.1.33/material.css" /> *@
 	<link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/28.2.3/bootstrap5-dark.css" />
@@ -13,10 +14,12 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/FinanceTracker.Web.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdn.syncfusion.com/ej2/28.1.33/dist/ej2.min.js"></script>
 </head>
-<body class="e-bigger">
-	<partial name="_SideBar" />
+<body class="e-bigger" style="overflow:hidden">
+	<partial name="_ToastrNotifications" />
+	<partial name ="_SideBar" />
 
 	<div class="dock-target">
 		<div class="w-100"></div>
@@ -24,8 +27,9 @@
 			<div class="container-fluid py-2 px-4">
 				<i class="fa-solid fa-magnifying-glass"></i>
 				<div>
-					<i class="fa-solid fa-bell"></i>
-					<i class="fa-solid fa-message"></i>
+					<partial name="_LoginPartial" />
+					@* <i class="fa-solid fa-bell"></i>
+					<i class="fa-solid fa-message"></i> *@
 				</div>
 			</div>
 		</nav>
@@ -55,7 +59,6 @@
 											</div>
 											<ejs-breadcrumb id="breadcrumb"
 															separatorTemplate="@Html.Raw("<span class='fa-solid fa-angle-right'></span>")">
-
 											</ejs-breadcrumb>
 										</div>
 									</div>
@@ -68,7 +71,7 @@
 			</div>
 		</div>
 	</div>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	@await RenderSectionAsync("Scripts", required: false)

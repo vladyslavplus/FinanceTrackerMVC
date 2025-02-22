@@ -1,0 +1,93 @@
+﻿@inject UserManager<Users> UserManager
+@{
+    ViewData["Title"] = "Profile";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="container mt-2">
+    <div class="card profile-card p-4">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <img id="avatar-preview" src="@(string.IsNullOrEmpty(user?.AvatarUrl) ? "/images/profile.png" : user.AvatarUrl)" class="profile-picture img-fluid rounded-circle" alt="Profile Picture">
+
+                <form asp-action="UploadAvatar" method="post" enctype="multipart/form-data">
+                    <div class="mt-3">
+                        <label class="btn btn-primary">
+                            Upload New Avatar
+                            <input type="file" name="avatar" class="d-none" accept="image/*" onchange="previewImage(event)" />
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Save Avatar</button>
+                </form>
+            </div>
+
+            <div class="col-md-9">
+                <h2 class="mb-3">Profile Settings</h2>
+                <form asp-action="Index" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="@user?.UserName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="@user?.Email" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Change Password</label>
+                        <input type="password" class="form-control" name="OldPassword" placeholder="Enter old password">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-control" name="NewPassword" placeholder="Enter new password">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" name="ConfirmPassword" placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" class="btn btn-custom w-100">Save Changes</button>
+                </form>
+
+                <form asp-action="Logout" method="post" class="mt-4">
+                    <button type="submit" class="btn btn-danger w-100">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-card {
+        background-color: #1a222b;
+        color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+    }
+
+    .btn-custom {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+</style>
+
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatar-preview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

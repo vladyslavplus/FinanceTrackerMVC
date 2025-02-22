@@ -1,0 +1,63 @@
+﻿@model RegisterViewModel;
+
+@{
+	ViewData["Title"] = "Register";
+	Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="login">
+	<img src="~/log-blue-bg.jpg" alt="image" class="login__bg" />
+
+	<form class="login__form" asp-action="Register" method="post">
+		@Html.AntiForgeryToken()
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<h1 class="login__title">Register</h1>
+		<div class="login__inputs">
+			<div class="login__box">
+				<input asp-for="Username" required placeholder="Enter your username" class="login__input" />
+				<i class="ri-mail-fill"></i>
+				<div class="text-danger">
+					@Html.ValidationMessageFor(model => model.Username)
+				</div>
+			</div>
+			<div class="login__box">
+				<input asp-for="Email" required placeholder="Enter your email" class="login__input" />
+				<i class="ri-mail-fill"></i>
+				<div class="text-danger">
+					@Html.ValidationMessageFor(model => model.Email)
+				</div>
+			</div>
+
+			<div class="login__box">
+				<input asp-for="Password" required placeholder="Enter your password" class="login__input" />
+				<i class="ri-lock-2-fill"></i>
+				<div class="text-danger">
+					@Html.ValidationMessageFor(model => model.Password)
+				</div>
+			</div>
+			<div class="login__box">
+				<input asp-for="ConfirmPassword" required placeholder="Confirm your password" class="login__input" />
+				<i class="ri-lock-2-fill"></i>
+				<div class="text-danger">
+					@Html.ValidationMessageFor(model => model.ConfirmPassword)
+				</div>
+			</div>
+		</div>
+
+		<button type="submit" class="login__button" value="Login">Register</button>
+
+		<div class="login__register">
+			Already have an account? <a asp-controller="Account" asp-action="Login" class="text-decoration-none text-white">Login</a>
+		</div>
+		<div class="login__register mt-2">
+			<a asp-controller="Dashboard" asp-action="Index" class="text-decoration-none text-white">Back</a>
+		</div>
+
+	</form>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+	}
+}

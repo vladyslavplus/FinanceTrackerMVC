@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace FinanceTracker.Web.Controllers
             _context = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             DateTime StartDate = DateTime.Today.AddDays(-6);
@@ -83,11 +85,13 @@ namespace FinanceTracker.Web.Controllers
                 .OrderBy(k => k.day)
                 .ToList();
 
+
             ViewBag.RecentTransactions = await _context.Transactions
                 .Include(i => i.Category)
-                .OrderByDescending(j => j.Date)
+                .OrderByDescending(j => j.Date.Date)
                 .Take(5)
                 .ToListAsync();
+
 
 
             return View(data);
