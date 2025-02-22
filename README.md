@@ -31,7 +31,7 @@ See screenshots of the project here: <a href="https://imgur.com/a/finance-tracke
 ## 🚀 How to Run
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/yourusername/FinanceTracker.git
+   git clone https://github.com/vladyslavplus/FinanceTrackerMVC.git
    ```
 2. Configure the MSSQL connection in `appsettings.json`
 3. Apply migrations using:  
@@ -40,7 +40,7 @@ See screenshots of the project here: <a href="https://imgur.com/a/finance-tracke
    ```
 4. Run the application:  
    ```sh
-   dotnet run --project FinanceTracker.Web
+   dotnet run --project FinanceTrackerMVC.Web
    ```
 
 ## 📜 License
