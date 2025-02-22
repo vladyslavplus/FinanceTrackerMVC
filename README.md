@@ -2,6 +2,9 @@
 
 Finance Tracker is a web application for managing finances, built with ASP.NET Core MVC using Clean Architecture.
 
+## 📷 Project Screenshots
+See screenshots of the project here: [Finance Tracker Images](https://imgur.com/a/finance-tracker-project-by-vladyslav-perevispa-asp-net-core-mvc-IlojimR)
+
 ## 🔥 Key Technologies
 - **ASP.NET Core MVC** – backend framework
 - **Entity Framework Core** – database management (MSSQL)
@@ -43,3 +46,4 @@ Finance Tracker is a web application for managing finances, built with ASP.NET C
 
 ## 📜 License
 MIT License
+
