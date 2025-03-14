@@ -2,6 +2,7 @@
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,21 +11,29 @@ namespace FinanceTracker.Web.Controllers
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Users> _userManager;
 
-        public DashboardController(ApplicationDbContext context)
+        public DashboardController(ApplicationDbContext context, UserManager<Users> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return NotFound();
+
             DateTime StartDate = DateTime.Today.AddDays(-6);
             DateTime EndDate = DateTime.Today;
 
             List<Transaction> transactions = await _context.Transactions
+                .AsNoTracking()
                 .Include(x => x.Category)
-                .Where(y => y.Date >= StartDate && y.Date <= EndDate)
+                .Where(y => y.UserId == user.Id && y.Date >= StartDate && y.Date <= EndDate)
                 .ToListAsync();
 
             decimal TotalIncome = transactions
@@ -88,10 +97,10 @@ namespace FinanceTracker.Web.Controllers
 
             ViewBag.RecentTransactions = await _context.Transactions
                 .Include(i => i.Category)
+                .Where(t => t.UserId == user.Id)
                 .OrderByDescending(j => j.Date.Date)
                 .Take(5)
                 .ToListAsync();
-
 
 
             return View(data);

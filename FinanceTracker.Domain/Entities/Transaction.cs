@@ -13,6 +13,8 @@ namespace FinanceTracker.Domain.Entities
         public decimal Amount { get; set; }
         public string? Note { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
+        public string UserId { get; set; } = string.Empty;
+        public Users? User { get; set; } = null!;
         [NotMapped]
         public string? CategoryTitleWithIcon
         {

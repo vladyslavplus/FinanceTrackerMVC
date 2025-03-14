@@ -7,7 +7,8 @@
 <div class="row">
 	<div class="col-md-7">
 		<div class="widget p-5" style="background-color:#212b36">
-			<form asp-action="AddOrEdit" id="transaction-form">
+			<form asp-action="AddOrEdit" id="transaction-form" method="post">
+				@Html.AntiForgeryToken()
 				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				<input type="hidden" name="Id" value="@Model.Id" />
 				<div class="mb-3">
@@ -33,8 +34,8 @@
 					<span asp-validation-for="Amount" class="text-danger fs-6"></span>
 				</div>
 				<div class="mb-3">
-					<ejs-textbox id="note" placeholder="Note" ejs-for="Note" 
-					floatLabelType="Always" multiline="true" cssClass="no-resize" rows="2"></ejs-textbox>
+					<ejs-textbox id="note" placeholder="Note" ejs-for="Note"
+								 floatLabelType="Always" multiline="true" cssClass="no-resize" rows="2"></ejs-textbox>
 				</div>
 				<ejs-button id="submit" cssClass="e-success" content="Submit"></ejs-button>
 			</form>
@@ -53,7 +54,7 @@
 	}
 
 	<script>
-		// CLIENT-VALIDATION 
+		// CLIENT-VALIDATION
 		document.addEventListener("DOMContentLoaded", function () {
 			var options = {
 				rules: {
@@ -61,7 +62,7 @@
 					'CategoryId': { required: true }
 				}
 			};
-			
+
 			var formObject = new ej.inputs.FormValidator('#transaction-form', options);
 
 			formObject.customPlacement = function (element, errorElement) {

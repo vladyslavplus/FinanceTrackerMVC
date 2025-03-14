@@ -45,46 +45,14 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.HasIndex("UserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Icon = "🍔",
-                            Title = "Food",
-                            Type = "Expense"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Icon = "💰",
-                            Title = "Salary",
-                            Type = "Income"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Icon = "🚗",
-                            Title = "Transport",
-                            Type = "Expense"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Icon = "🛍️",
-                            Title = "Shopping",
-                            Type = "Expense"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Icon = "📈",
-                            Title = "Investment",
-                            Type = "Income"
-                        });
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Messages", b =>
@@ -137,53 +105,17 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Transactions");
+                    b.HasIndex("UserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 50.75m,
-                            CategoryId = 1,
-                            Date = new DateTime(2025, 2, 20, 12, 41, 27, 597, DateTimeKind.Local).AddTicks(3759),
-                            Note = "Lunch"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 2000.00m,
-                            CategoryId = 2,
-                            Date = new DateTime(2025, 2, 12, 12, 41, 27, 597, DateTimeKind.Local).AddTicks(3768),
-                            Note = "Monthly salary"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 15.00m,
-                            CategoryId = 3,
-                            Date = new DateTime(2025, 2, 21, 12, 41, 27, 597, DateTimeKind.Local).AddTicks(3771),
-                            Note = "Taxi ride"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Amount = 100.00m,
-                            CategoryId = 4,
-                            Date = new DateTime(2025, 2, 17, 12, 41, 27, 597, DateTimeKind.Local).AddTicks(3774),
-                            Note = "New shoes"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Amount = 300.00m,
-                            CategoryId = 5,
-                            Date = new DateTime(2025, 2, 19, 12, 41, 27, 597, DateTimeKind.Local).AddTicks(3777),
-                            Note = "Stock purchase"
-                        });
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Users", b =>
@@ -391,15 +323,32 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("FinanceTracker.Domain.Entities.Users", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Transaction", b =>
                 {
                     b.HasOne("FinanceTracker.Domain.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FinanceTracker.Domain.Entities.Users", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -451,6 +400,11 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Users", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

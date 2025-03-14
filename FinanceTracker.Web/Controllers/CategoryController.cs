@@ -3,23 +3,31 @@ using Microsoft.EntityFrameworkCore;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace FinanceTracker.Web.Controllers
 {
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Users> _userManager;
 
-        public CategoryController(ApplicationDbContext context)
+        public CategoryController(ApplicationDbContext context, UserManager<Users> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Category
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+            var categories = await _context.Categories
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            return View(categories);
         }
 
         // GET: Category/AddOrEdit
@@ -29,7 +37,15 @@ namespace FinanceTracker.Web.Controllers
             if(id == 0) 
                 return View(new Category());
             else
-                return View(await _context.Categories.FindAsync(id));
+            {
+                var userId = _userManager.GetUserId(User);
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
+                if (category == null)
+                    return NotFound();
+
+                return View(category);
+            }
         }
 
         // POST: Category/AddOrEdit
@@ -40,17 +56,29 @@ namespace FinanceTracker.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(category.Id == 0)
+                var userId = _userManager.GetUserId(User);
+
+                if (category.Id == 0)
                 {
+                    category.UserId = userId; 
                     _context.Add(category);
                     TempData["SuccessMessage"] = "Category added successfully!";
                 }
                 else
                 {
-                    _context.Update(category);
+                    var existingCategory = await _context.Categories
+                        .FirstOrDefaultAsync(c => c.Id == category.Id && c.UserId == userId);
+
+                    if (existingCategory == null)
+                        return NotFound(); 
+
+                    existingCategory.Title = category.Title;
+                    existingCategory.Icon = category.Icon;
+                    existingCategory.Type = category.Type;
+
+                    _context.Update(existingCategory);
                     TempData["SuccessMessage"] = "Category updated successfully!";
                 }
-                   
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -64,14 +92,16 @@ namespace FinanceTracker.Web.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                TempData["SuccessMessage"] = "Category deleted successfully!";
-            }
+            var userId = _userManager.GetUserId(User);
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
 
+            if (category == null)
+                return NotFound(); 
+
+            _context.Categories.Remove(category);
+            TempData["SuccessMessage"] = "Category deleted successfully!";
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
     }
